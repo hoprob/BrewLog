@@ -1,0 +1,11 @@
+<form class="mash-form" [formGroup]="mashForm" (submit)="reportPh()">
+    <mat-form-field>
+        <input matInput placeholder="Mash pH" type="text" formControlName="measuredMashPh">
+        <mat-hint>Enter measured mash pH</mat-hint>
+    </mat-form-field>
+    <button mat-raised-button type="submit">Save</button>
+</form>
+
+<h2>Lactic acid to add: {{lacticAcidToAdd}}</h2>
+
+<button mat-raised-button (click)="mashComplete()">Mash Complete</button>

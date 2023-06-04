@@ -1,0 +1,36 @@
+<form class="preboil-form" [formGroup]="preboilForm" (ngSubmit)="submitPreboilForm()">
+    <mat-form-field>
+        <input matInput placeholder="Preboil volume" type="text" formControlName="preboilVolume">
+        <mat-hint>Enter number of liters of wort in start of boil</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Preboil sg" type="text" formControlName="preboilSg">
+        <mat-hint>Enter sepcifig gravity in start of boil</mat-hint>
+    </mat-form-field>
+    <button mat-raised-button type="submit">Save</button>
+</form>
+
+<div *ngIf="suggestedSgAdjustment">
+    <p>{{suggestedSgAdjustment}}</p>
+
+
+    <mat-radio-group [(ngModel)]="adjustmentType" name="adjustment">
+        <mat-radio-button value="water">Add water</mat-radio-button>
+        <mat-radio-button value="time">Extend boiltime</mat-radio-button>
+    </mat-radio-group>
+
+    <form class="boil-adjustment-form" [formGroup]="boilAdjustmentForm" (ngSubmit)="submitBoilAdjustmentForm()">
+
+        <mat-form-field *ngIf="adjustmentType === 'water'">
+            <input matInput placeholder="Water added" type="text" formControlName="addWater">
+            <mat-hint>Enter the number of liters of water added to boil</mat-hint>
+        </mat-form-field>
+        <mat-form-field *ngIf="adjustmentType === 'time'">
+            <input matInput placeholder="Minutes added" type="text" formControlName="addMinutes">
+            <mat-hint>Enter the number of minutes added to boil time</mat-hint>
+        </mat-form-field>
+        <button mat-raised-button type="submit">Save to log</button>
+    </form>
+
+    <button mat-raised-button (click)="boilComplete()">Boil Complete</button>
+</div>

@@ -1,0 +1,11 @@
+<form class="cooling-form" [formGroup]="coolingForm" (ngSubmit)="submitCoolingForm()">
+    <mat-form-field>
+        <input matInput placeholder="OG" type="text" formControlName="og">
+        <mat-hint>Enter the OG of the finished wort</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Volume in fermenter" type="text" formControlName="volumeInFermenter">
+        <mat-hint>Enter the final liters of wort in fermenter</mat-hint>
+    </mat-form-field>
+    <button mat-raised-button type="submit">Save</button>
+</form>

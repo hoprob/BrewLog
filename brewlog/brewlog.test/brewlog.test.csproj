@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka" Version="1.5.7" />
+    <PackageReference Include="Akka.TestKit" Version="1.5.7" />
+    <PackageReference Include="Akka.TestKit.VsTest" Version="1.3.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.0.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.0.3" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\brewlog.api_OLD\brewlog.api_OLD.csproj" />
+    <ProjectReference Include="..\brewlog.application\brewlog.application.csproj" />
+  </ItemGroup>
+
+</Project>

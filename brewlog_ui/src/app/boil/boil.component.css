@@ -1,0 +1,4 @@
+.preboil-form, .boil-adjustment-form{
+    display: flex;
+    flex-direction: column;
+}

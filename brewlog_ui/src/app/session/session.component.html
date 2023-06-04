@@ -1,0 +1,7 @@
+<form class="new-session-form" (submit)="startSession()">
+    <mat-form-field>
+        <input matInput placeholder="Enter session name" type="text" [formControl]="sessionName">
+        <mat-hint>The name will be given to the session actor</mat-hint>
+    </mat-form-field>
+    <button mat-raised-button type="submit">Start Session</button>
+</form>

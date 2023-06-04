@@ -1,0 +1,7 @@
+<form class="lauter-form" [formGroup]="lauterForm" (submit)="submitLauterForm()">
+    <mat-form-field>
+        <input matInput placeholder="Water added" type="text" formControlName="waterInLauter">
+        <mat-hint>Enter number of liters of water added in lauter</mat-hint>
+    </mat-form-field>
+    <button mat-raised-button type="submit">Save</button>
+</form>
