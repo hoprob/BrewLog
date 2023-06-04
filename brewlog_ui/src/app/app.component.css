@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&display=swap');
+
+header{
+    display: flex;
+    justify-content: center;
+    margin: 5rem 0 5rem 0;
+}
+header h1{
+    font-family: 'Roboto Mono', monospace;
+    font-size: 65px;
+}
+
+main{
+    display: flex;
+    justify-content: center;
+}

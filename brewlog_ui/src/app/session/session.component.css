@@ -1,0 +1,8 @@
+.new-session-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.new-session-form button{
+    margin-top: 3rem;
+}

@@ -1,0 +1,38 @@
+
+<form [formGroup]="recipeForm" class="recipe-form" (ngSubmit)="submitRecipe()">
+    <mat-form-field>
+        <input matInput placeholder="Batch Name" formControlName="batchName">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Target Og" formControlName="targetOg">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Target Fg" formControlName="targetFg">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Target Mash Ph" formControlName="targetMashPh">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Mash Volume" formControlName="mashVolume">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Lauter Volume" formControlName="lauterVolume">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Target Finish Volume" formControlName="targetVolume">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Mash Time" formControlName="mashTime">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Boil Time" formControlName="boilTime">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Beer style</mat-label>
+        <mat-select formArrayName="beerStyle">
+            <mat-option value=0>Lager</mat-option>
+            <mat-option value=1>Ale</mat-option>    
+        </mat-select>
+    </mat-form-field>
+    <button mat-raised-button type="submit">Add recipe</button>
+</form>

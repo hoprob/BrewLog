@@ -1,0 +1,8 @@
+.fermentation-value-form{
+    display: flex;
+    flex-direction: column;
+}
+.fermentation-complete-form{
+    display: flex;
+    flex-direction: column;
+}
