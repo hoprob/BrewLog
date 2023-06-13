@@ -1,0 +1,45 @@
+<div class="log-note-content">
+    <mat-card class="log-card mat-elevation-z10">   
+        <mat-card-content>
+            <mat-card class="log-form-card mat-elevation-z8">
+                <mat-card-header>
+                    <mat-card-title>New note</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form class="lognote-form" [formGroup]="logNoteForm" (ngSubmit)="submitLognoteForm()">
+                        <mat-form-field class="note">
+                            <textarea matInput placeholder="Note" formControlName="note"></textarea>
+                            <mat-hint>Enter the log note</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Save</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="log-table-card mat-elevation-z8">
+                <mat-card-header>
+                    <mat-card-title>Notes</mat-card-title>
+                </mat-card-header>
+                <mat-card-content class="log-table">
+                    <table mat-table [dataSource]="logNotes">
+                        <ng-container matColumnDef="date">
+                            <th mat-header-cell *matHeaderCellDef>Date</th>
+                            <td mat-cell *matCellDef="let logNote">{{formatDateTimeString(logNote.time)}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="stage">
+                            <th mat-header-cell *matHeaderCellDef>Stage</th>
+                            <td mat-cell *matCellDef="let logNote">{{logNote.stage}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="note">
+                            <th mat-header-cell *matHeaderCellDef>Note</th>
+                            <td mat-cell *matCellDef="let logNote">{{logNote.note}}</td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </mat-card-content>    
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+

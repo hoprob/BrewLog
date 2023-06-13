@@ -1,5 +1,5 @@
 ﻿using Akka.Actor;
-using Akka.Streams.Stage;
+using brewlog.application.Interfaces;
 using brewlog.domain.Models.Enums;
 
 namespace brewlog.application.Actors
@@ -15,7 +15,7 @@ namespace brewlog.application.Actors
             public record GetRequiredYeastCells(double OriginalGravity, double Volume, BeerStyle beerStyle);
             public record GetYeastViability(double InitialPackageCells, DateTimeOffset YeastProductionDate);
             public record GetGramsOfDME(double litresWater);
-            public record GetStarterProducedCells(double gramsOfDME, double initialCells);
+            public record GetStarterProducedCells(double gramsOfDME, double initialCells) : IBrewSessionValidate;
         }
         public class Responses
         {

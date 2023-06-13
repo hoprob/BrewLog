@@ -1,33 +1,72 @@
-<form class="yeast-package-form" [formGroup]="yeastPackageForm" (ngSubmit)="submitYeastPackage()">
-    <mat-form-field>
-        <input matInput placeholder="Cells in package" formControlName="initialCells">
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput type="date" placeholder="Production date" formControlName="yeastProductionDate">
-    </mat-form-field>
-    <button mat-raised-button [disabled]="packageSubmitted" type="submit">Save</button>
-</form>
-
-
-<form *ngIf="packageSubmitted" class="yeast-starters" (ngSubmit)="saveStarters()">
-    <div class="yeast-starter" *ngFor="let starter of yeastStarters, let i = index">
-        <mat-form-field>
-            <input matInput placeholder="Starter in liter" type="number" [(ngModel)]="starter.waterLitres" name="liters">
-            <!-- <mat-slider [min]="0" [max]="5" [step]="0.2" [(ngModel)]="starter.waterLitres" name="waterLiters"><input matSliderThumb matInput></mat-slider> -->
-        </mat-form-field>
-        <button mat-raised-button type="button" (click)="calculateStarter(starter)">Calculate</button>
-        <p>Water: {{starter.waterLitres}}</p>
-        <p>DME: {{starter.dryMaltExtract}}</p>
-        <p>Initial Cells: {{starter.initialCells}}</p>
-        <p>Produced Cells: {{starter.calculatedYeastCells}}</p>
-        <button *ngIf="(i === yeastStarters.length-1)" mat-raised-button  type="button" (click)="removeStarter()">Remove Starter</button>
+<div class="yeast-starter-content">
+    <div class="yeast-starter-content-header">
+        <h2>Yeast starter stage</h2>
+        <h4>Start with entering your yeast package details..</h4>
     </div>
-    <button mat-raised-button type="button" (click)="addStarter()">Add Starter</button>
-    <button mat-raised-button type="submit">Save Starters</button>
-</form>
-<h2>Yeast Viability: {{packageViability}}%</h2>
-<h2>Total Cells: {{getTotalCells()}}</h2>
-<h2>Cells needed: {{cellsNeeded}}</h2>
+    <mat-card class="yeast-values-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Yeast values</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="yeast-values-card-content">
+            <h2>Yeast Viability: {{packageViability}}%</h2>
+            <h2>Total Cells: {{getTotalCells()}}</h2>
+            <h2>Cells needed: {{cellsNeeded}}</h2>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="yeast-package-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Yeast package</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="yeast-package-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="yeast-package-form" [formGroup]="yeastPackageForm" (ngSubmit)="submitYeastPackage()">
+                        <mat-form-field>
+                            <input matInput placeholder="Cells in package" formControlName="initialCells">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput type="date" placeholder="Production date"
+                                formControlName="yeastProductionDate">
+                        </mat-form-field>
+                        <button mat-raised-button [disabled]="packageSubmitted" type="submit">Save</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
 
-<button *ngIf="packageSubmitted" mat-raised-button (click)="moveToMash()">Move to mash</button>
-
+    <mat-card class="yeast-starters-card mat-elevation-z10" *ngIf="packageSubmitted">
+        <mat-card-content>
+            <mat-card class="yeast-starters-form-card mat-elevation-z8">
+                <mat-card-header>
+                    <mat-card-title>Yeast starters</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form class="yeast-starters" (ngSubmit)="saveStarters()">
+                        <div class="yeast-starter" *ngFor="let starter of yeastStarters, let i = index">
+                            <mat-form-field>
+                                <input matInput placeholder="Starter in liter" type="number" [(ngModel)]="starter.waterLitres"
+                                    name="liters">
+                                <!-- <mat-slider [min]="0" [max]="5" [step]="0.2" [(ngModel)]="starter.waterLitres" name="waterLiters"><input matSliderThumb matInput></mat-slider> -->
+                            </mat-form-field>
+                            <button mat-raised-button type="button" (click)="calculateStarter(starter)">Calculate</button>
+                            <p>Water: {{starter.waterLitres}}</p>
+                            <p>DME: {{starter.dryMaltExtract}}</p>
+                            <p>Initial Cells: {{starter.initialCells}}</p>
+                            <p>Produced Cells: {{starter.calculatedYeastCells}}</p>
+                            <button *ngIf="(i !== 0 && i === yeastStarters.length-1)" mat-raised-button type="button"
+                                (click)="removeStarter()">Remove Starter</button>
+                        </div>
+                        <button mat-raised-button type="button" (click)="addStarter()">Add Starter</button>
+                        <button mat-raised-button type="submit">Save Starters</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    
+    <div class="mash-btn">
+        <button *ngIf="packageSubmitted" mat-raised-button (click)="moveToMash()">Move to mash</button>
+    </div>
+    <app-log-note></app-log-note>
+</div>

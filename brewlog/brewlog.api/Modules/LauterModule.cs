@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using brewlog.api.Extentions;
 using brewlog.application.Actors;
 using brewlog.application.Extentions;
 using Carter;
@@ -19,18 +20,15 @@ namespace brewlog.api.Modules
         {
             var lauter = app.MapGroup("/lauter").WithTags("Lauter").WithOpenApi();
 
-            lauter.MapPost("/{sessionName}/water-in-lauter", async (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.AddTotalWaterInLauter command) =>
-            await TotalWaterInLauter(ctx, sessionName, command)).WithDescription("Stores the total water added in lauter stage").WithName(nameof(TotalWaterInLauter));
+            lauter.MapPost("/{sessionName}/water-in-lauter", (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.AddTotalWaterInLauter command) =>
+            TotalWaterInLauter(ctx, sessionName, command)).WithDescription("Stores the total water added in lauter stage").WithName(nameof(TotalWaterInLauter));
         }
 
-        private async Task<IResult> TotalWaterInLauter(HttpContext ctx, string sessionName, BrewSessionActor.Commands.AddTotalWaterInLauter command)
+        private IResult TotalWaterInLauter(HttpContext ctx, string sessionName, BrewSessionActor.Commands.AddTotalWaterInLauter command)
         {
-            var validation = ctx.Request.Validate(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }

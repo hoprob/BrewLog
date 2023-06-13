@@ -1,11 +1,41 @@
-<form class="mash-form" [formGroup]="mashForm" (submit)="reportPh()">
-    <mat-form-field>
-        <input matInput placeholder="Mash pH" type="text" formControlName="measuredMashPh">
-        <mat-hint>Enter measured mash pH</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Save</button>
-</form>
-
-<h2>Lactic acid to add: {{lacticAcidToAdd}}</h2>
-
-<button mat-raised-button (click)="mashComplete()">Mash Complete</button>
+<div class="mash-content">
+    <mat-card class="measured-ph-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Measured pH</mat-card-title>
+        </mat-card-header>
+        <mat-card class="measured-ph-form-card mat-elevation-z8">
+            <mat-card-content>
+                <form class="mash-form" [formGroup]="mashForm" (submit)="reportPh()">
+                    <mat-form-field>
+                        <input matInput placeholder="Mash pH" type="text" formControlName="measuredMashPh">
+                        <mat-hint>Enter measured mash pH</mat-hint>
+                    </mat-form-field>
+                    <button mat-raised-button type="submit">Save</button>
+                </form>
+                <h2>Lactic acid to add: {{lacticAcidToAdd}}ml</h2>
+            </mat-card-content>
+        </mat-card>
+    </mat-card>
+    <mat-card class="added-acid-card">
+        <mat-card-header>
+            <mat-card-title>Acid added</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="added-acid-form-card">
+                <mat-card-content>
+                    <form class="added-acid-form" [formGroup]="addedAcidForm" (ngSubmit)="reportAcidAdded()">
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="Acid added" formControlName="addedAcid">
+                            <mat-hint>Enter ml of lactic acid added</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Save</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <div class="mash-complete-btn">
+        <button mat-raised-button (click)="mashComplete()">Mash Complete</button>
+    </div>
+    <app-log-note></app-log-note>
+</div>

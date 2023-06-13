@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using brewlog.api.Extentions;
 using brewlog.application.Actors;
 using brewlog.application.Extentions;
 using Carter;
@@ -19,18 +20,15 @@ namespace brewlog.api.Modules
         {
             var cooling = app.MapGroup("/cooling").WithTags("Cooling").WithOpenApi();
 
-            cooling.MapPost("/{sessionName}/post-cooling-values", async (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.ReportPostCoolingValues command) =>
-            await LogPostCoolingValues(ctx, sessionName, command)).WithDescription("Stores the post-cooling values").WithName(nameof(LogPostCoolingValues));
+            cooling.MapPost("/{sessionName}/post-cooling-values", (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.ReportPostCoolingValues command) =>
+            LogPostCoolingValues(ctx, sessionName, command)).WithDescription("Stores the post-cooling values").WithName(nameof(LogPostCoolingValues));
         }
 
-        private async Task<IResult> LogPostCoolingValues(HttpContext ctx, string sessionName, BrewSessionActor.Commands.ReportPostCoolingValues command)
+        private IResult LogPostCoolingValues(HttpContext ctx, string sessionName, BrewSessionActor.Commands.ReportPostCoolingValues command)
         {
-            var validation = ctx.Request.Validate(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }

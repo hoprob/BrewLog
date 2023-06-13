@@ -2,3 +2,37 @@
     display: flex;
     flex-direction: column;
 }
+
+.bottling-content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.session-complete-btn{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin: 1rem;
+}
+
+.bottling-input-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+}
+
+.bottling-form-card{
+    background-color: #a28f65;
+ }
+
+ .bottling-form-card button{
+    margin-top: 0.5rem;
+ }
+
+ .bottling-form-card h2{
+    margin: 1rem;
+ }
+
+.form-field{
+    margin-bottom: 1rem;
+}
+

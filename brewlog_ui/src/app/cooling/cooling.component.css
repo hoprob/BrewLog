@@ -2,3 +2,19 @@
     display: flex;
     flex-direction: column;
 }
+
+.post-cooling-form-card{
+    background-color: #a28f65; 
+}
+
+.post-cooling-form-card .form-field{
+    margin-bottom: 0.8rem;
+}
+
+.post-cooling-form-card button{
+    margin-top: 0.5rem;
+}
+
+.post-cooling-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+}

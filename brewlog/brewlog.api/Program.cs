@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using brewlog.api.Validators;
 using ProtoBuf.Meta;
+using brewlog.application.Actors;
 
 namespace brewlog.api
 {
@@ -23,6 +24,14 @@ namespace brewlog.api
             //Add AKKA.NET Actor system
             builder.Services.AddAkka("brewlogactorsystem", (configurationBuilder, provider) =>
             {
+                configurationBuilder
+                .WithActors((system, actorRegistry) =>
+                {
+                    var coordinator = system.ActorOf(BrewSessionsCoordinatorActor.Init());
+
+                    actorRegistry.TryRegister<BrewSessionsCoordinatorActor>(coordinator);
+                });
+
                 configurationBuilder.WithActorAskTimeout(new TimeSpan(50000000));
                 configurationBuilder.AddHocon(@"
                 akka {

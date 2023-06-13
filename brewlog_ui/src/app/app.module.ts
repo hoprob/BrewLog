@@ -14,11 +14,13 @@ import { BoilComponent } from './boil/boil.component';
 import { CoolingComponent } from './cooling/cooling.component';
 import { FermentationComponent } from './fermentation/fermentation.component';
 import { BottlingComponent } from './bottling/bottling.component';
+import { LogNoteComponent } from './log-note/log-note.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
+import {MatListModule} from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import {MatRadioModule} from '@angular/material/radio';
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -36,7 +38,8 @@ import { environment } from 'src/environments/environment';
     BoilComponent,
     CoolingComponent,
     FermentationComponent,
-    BottlingComponent
+    BottlingComponent,
+    LogNoteComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +54,8 @@ import { environment } from 'src/environments/environment';
     MatSliderModule,
     MatInputModule,
     MatFormFieldModule,
-    MatRadioModule
+    MatRadioModule,
+    MatListModule,
   ],
   providers: [
     {provide: BASE_PATH, useValue: environment.blApiUrl}

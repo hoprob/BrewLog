@@ -2,3 +2,50 @@
     display: flex;
     flex-direction: column;
 }
+
+.mash-form  button{
+    margin: 0.8rem 0 1rem 0;
+}
+
+.measured-ph-form-card{
+    background-color: #a28f65; 
+}
+
+.measured-ph-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 1rem;
+}
+
+.mash-content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.mash-complete-btn{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+}
+
+.added-acid-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 1rem;
+    align-self: flex-start;
+}
+
+.added-acid-form-card{
+    background-color: #a28f65;
+    
+}
+
+.added-acid-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.added-acid-form .form-field{
+    margin-bottom: 0.8rem;
+}
+

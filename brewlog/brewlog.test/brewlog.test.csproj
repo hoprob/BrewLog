@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\brewlog.api_OLD\brewlog.api_OLD.csproj" />
     <ProjectReference Include="..\brewlog.application\brewlog.application.csproj" />
   </ItemGroup>
 

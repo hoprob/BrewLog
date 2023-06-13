@@ -2,7 +2,54 @@
     display: flex;
     flex-direction: column;
 }
+
+.fermentation-value-form .form-field{
+    margin-bottom: 0.8rem;
+}
+
 .fermentation-complete-form{
     display: flex;
     flex-direction: column;
+}
+
+.fermentation-complete-form .form-field{
+    margin-bottom: 1rem;
+}
+
+.ferment-content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.fermentation-value-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 1rem;
+    align-self: self-start;   
+}
+
+.fermentation-value-form-card{
+    background-color: #a28f65; 
+}
+
+.current-abv-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 1rem;
+    align-self: self-start;    
+}
+
+.current-abv-value-card{
+    background-color: #a28f65; 
+    display: flex;
+    justify-content: center;
+}
+
+.fermentation-complete-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 1rem;
+    align-self: self-start;
+}
+
+.fermentation-complete-form-card{
+    background-color: #a28f65; 
 }

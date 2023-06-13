@@ -1,11 +1,27 @@
-<form class="cooling-form" [formGroup]="coolingForm" (ngSubmit)="submitCoolingForm()">
-    <mat-form-field>
-        <input matInput placeholder="OG" type="text" formControlName="og">
-        <mat-hint>Enter the OG of the finished wort</mat-hint>
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="Volume in fermenter" type="text" formControlName="volumeInFermenter">
-        <mat-hint>Enter the final liters of wort in fermenter</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Save</button>
-</form>
+<div class="cooling-content">
+    <mat-card class="post-cooling-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Post cooling values</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="post-cooling-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="cooling-form" [formGroup]="coolingForm" (ngSubmit)="submitCoolingForm()">
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="OG" type="text" formControlName="og">
+                            <mat-hint>Enter the OG of the finished wort</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="Volume in fermenter" type="text" formControlName="volumeInFermenter">
+                            <mat-hint>Enter the final liters of wort in fermenter</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Save</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <app-log-note></app-log-note>
+</div>
+
+

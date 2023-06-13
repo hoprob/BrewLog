@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Persistence;
-using brewlog.api.Actors;
+using brewlog.application.Extentions;
 using brewlog.domain.Models;
 using System.Collections.Immutable;
 using static brewlog.application.Actors.BrewSessionActor.Queries;
@@ -15,15 +15,15 @@ namespace brewlog.application.Actors
 
         public BrewSessionActor()
         {
+            Recover<Events.AddedLogNote>(On);
             Recover<Events.AddedSessionRecipe>(On);
             Recover<Events.EnteredValuesForYeastPackage>(On);
             Recover<Events.StoredYeastStarters>(On);
             Recover<Events.YeastStarterCompleted>(On);
             Recover<Events.AddedMashPhValue>(On);
+            Recover<Events.AddedAcidAddition>(On);
             Recover<Events.MashStateCompleted>(On);
             Recover<Events.AddedTotalWaterInLauter>(On);
-            //Recover<Events.AddedBoilVolume>(On);
-            //Recover<Events.AddedPreBoilSg>(On);
             Recover<Events.AddedPreBoilValues>(On);
             Recover<Events.AddedAdditionalBoilWater>(On);
             Recover<Events.AddedExtendedBoilTime>(On);
@@ -34,30 +34,20 @@ namespace brewlog.application.Actors
             Recover<Events.ReportedPostCoolingValues>(On);
             Recover<Events.FermentationStageCompleted>(On);
             Recover<Events.AddedBottlingValues>(On);
-            //Recover<Events.ChangedBottlingStorageTemperature>(On);
-            //Recover<Events.DesiredCo2VolumeSet>(On);
 
 
             Become(Recipe);
         }
 
-        //protected override bool AroundReceive(Receive receive, object message)
-        //{
-        //    var handled = base.AroundReceive(receive, message);
-
-        //    if (!handled)
-        //    {
-        //        //TODO: Handle missing handler
-        //        Sender.Tell(new ActorResponseData(null, "Error"));
-
-        //        return true;
-        //    }
-
-        //    return handled;
-        //}
-
         private void Recipe()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Recipe", cmd.Note)), On);
+            });
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+            
             Command<Queries.GetBrewSessionState>(_ =>
             {
                 Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Recipe"));
@@ -83,6 +73,8 @@ namespace brewlog.application.Actors
                     
                     Sender.Tell(new Responses.AddSessionRecipeResponse());
                 });
+
+                Self.Tell(new Commands.AddLogNote("Added session recipe."));
             });
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(SessionValues)));
@@ -90,6 +82,14 @@ namespace brewlog.application.Actors
 
         private void YeastStarter()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "YeastStarter", cmd.Note)), On);
+            });
+
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
             Command<Queries.GetBrewSessionState>(_ =>
             {
                 Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("YeastStarter"));
@@ -106,6 +106,8 @@ namespace brewlog.application.Actors
                 {
                     On(evnt);
                 });
+
+                Self.Tell(new Commands.AddLogNote("Added yeast package values."));
             });
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
@@ -141,19 +143,43 @@ namespace brewlog.application.Actors
                     });
                 }
                 Persist(new Events.StoredYeastStarters(starters), On);
+
+                Self.Tell(new Commands.AddLogNote("Added yeast starters."));
             });
 
-            Command<Commands.YeastStarterComplete>(_ => Persist(new Events.YeastStarterCompleted(), On));
+            Command<Commands.YeastStarterComplete>(_ =>
+            {
+                Persist(new Events.YeastStarterCompleted(), On);
+                Self.Tell(new Commands.AddLogNote("Yeast starter stage complete. Proceed to mash."));
+            });
         }
 
         private void Mash()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Mash", cmd.Note)), On);
+            });
+
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
             Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Mash")));
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
 
-            Command<Commands.AddPhValue>(cmd => Persist(new Events.AddedMashPhValue(cmd.Ph), On));
+            Command<Commands.AddPhValue>(cmd =>
+            {
+                Persist(new Events.AddedMashPhValue(cmd.Ph), On);
+                Self.Tell(new Commands.AddLogNote($"Meashured mash pH to {cmd.Ph.ToStringWithDot()}"));
+            });
 
+            Command<Commands.AddAcidAddition>(cmd =>
+            {
+                Persist(new Events.AddedAcidAddition(cmd.ml), On);
+                Self.Tell(new Commands.AddLogNote($"Added {cmd.ml.ToStringWithDot()}ml of lactic acid in mash."));
+            });
+            
             CommandAsync<Queries.GetPhLoweringAcid>(async _ =>
             {
                 var phActor = Context.ActorOf<PhCalculatorActor>();
@@ -167,26 +193,51 @@ namespace brewlog.application.Actors
                 Sender.Tell(new Responses.GetPhLoweringAcidResponse(response.mlLActicAcid));
             });
 
-            Command<Commands.MashStageComplete>(_ => Persist(new Events.MashStateCompleted(), On));
+            Command<Commands.MashStageComplete>(_ =>
+            {
+                Persist(new Events.MashStateCompleted(), On);
+                Self.Tell(new Commands.AddLogNote("Mash stage complete. Proceed to lauter."));
+            });
         }
         private void Lauter()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Lauter", cmd.Note)), On);
+            });
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
             Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Lauter")));
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
 
-            Command<Commands.AddTotalWaterInLauter>(cmd => Persist(new Events.AddedTotalWaterInLauter(cmd.LitresWater), On));
+            Command<Commands.AddTotalWaterInLauter>(cmd =>
+            {
+                Persist(new Events.AddedTotalWaterInLauter(cmd.LitresWater), On);
+                Self.Tell(new Commands.AddLogNote($"Total water in lauter: {cmd.LitresWater.ToStringWithDot()} liters."));
+            });
         }
         private void Boil()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Boil", cmd.Note)), On);
+            });
+
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
             Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Boil")));
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
 
-            //Command<Commands.AddBoilVolume>(cmd => Persist(new Events.AddedBoilVolume(cmd.Litres), On));
-
-            //Command<Commands.AddPreBoilSg>(cmd => Persist(new Events.AddedPreBoilSg(cmd.PreBoilSg), On));
-            Command<Commands.AddPreBoilValues>(cmd => Persist(new Events.AddedPreBoilValues(cmd.Liters, cmd.Sg), On));
+            Command<Commands.AddPreBoilValues>(cmd =>
+            {
+                Persist(new Events.AddedPreBoilValues(cmd.Liters, cmd.Sg), On);
+                Self.Tell(new Commands.AddLogNote($"Added pre-boil values. Volume: {cmd.Liters.ToStringWithDot()}" +
+                    $" liters. Sg: {cmd.Sg.ToStringWithDot()}"));
+            });
 
             CommandAsync<Queries.GetSuggestedBoilSgAdjustment>(async _ =>
             {
@@ -203,30 +254,72 @@ namespace brewlog.application.Actors
                 Sender.Tell(new Responses.GetSuggestedBoilSgAdjustmentResponse(response.WaterToAdd, response.BoilMinutesToAdd));
             });
 
-            Command<Commands.AddAdditionalBoilWater>(cmd => Persist(new Events.AddedAdditionalBoilWater(cmd.Litres), On));
+            Command<Commands.AddAdditionalBoilWater>(cmd =>
+            {
+                Persist(new Events.AddedAdditionalBoilWater(cmd.Litres), On);
+                Self.Tell(new Commands.AddLogNote($"Added additional boilwater: {cmd.Litres.ToStringWithDot()} liters."));
+            });
 
-            Command<Commands.AddExtendedBoilTime>(cmd => Persist(new Events.AddedExtendedBoilTime(cmd.Minutes), On));
+            Command<Commands.AddExtendedBoilTime>(cmd =>
+            {
+                Persist(new Events.AddedExtendedBoilTime(cmd.Minutes), On);
+                Self.Tell(new Commands.AddLogNote($"Extended boiltime with: {cmd.Minutes.ToStringWithDot()} minutes."));
+            });
 
-            Command<Commands.BoilStageComplete>(_ => Persist(new Events.BoilStageCompleted(), On));
+            Command<Commands.BoilStageComplete>(_ =>
+            {
+                Persist(new Events.BoilStageCompleted(), On);
+                Self.Tell(new Commands.AddLogNote("Boil stage complete. Proceed to cooling."));
+            });
 
         }
         private void Cool()
         {
-            Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Cool")));
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Cooling", cmd.Note)), On);
+            });
+
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
+            Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Cooling")));
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
 
-            Command<Commands.ReportPostCoolingValues>(cmd => Persist(new Events.ReportedPostCoolingValues(cmd.Og, cmd.VolumeInFermentationVessle), On));         
+            Command<Commands.ReportPostCoolingValues>(cmd =>
+            {
+                Persist(new Events.ReportedPostCoolingValues(cmd.Og, cmd.VolumeInFermentationVessle), On);
+                Self.Tell(new Commands.AddLogNote($"Reported post cooling values. Og: {cmd.Og.ToStringWithDot()}." +
+                    $" Volume in fermenter: {cmd.VolumeInFermentationVessle.ToStringWithDot()}"));
+            });
         }
         private void Ferment()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Ferment", cmd.Note)), On);
+            });
+
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
             Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new BrewSessionActor.Responses.GetBrewSessionStateResponse("Ferment")));
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
 
-            Command<Commands.AddFermentationValue>(cmd => Persist(new Events.AddedFermentationValue(cmd.FermentationValue), On));
+            Command<Commands.AddFermentationValue>(cmd =>
+            {
+                Persist(new Events.AddedFermentationValue(cmd.FermentationValue), On);
+                Self.Tell(new Commands.AddLogNote($"Added fermentation value. Sg: {cmd.FermentationValue.sg.ToStringWithDot()}," +
+                    $" Temperature: {cmd.FermentationValue.temp.ToStringWithDot()} C ."));
+            });
 
-            Command<Commands.ChangeFermentationTemperature>(cmd => Persist(new Events.ChangedFermentationTemperature(cmd.Temperature), On));
+            Command<Commands.ChangeFermentationTemperature>(cmd =>
+            {
+                Persist(new Events.ChangedFermentationTemperature(cmd.Temperature), On);
+                Self.Tell(new Commands.AddLogNote($"Changed fermentation temperature to: {cmd.Temperature.ToStringWithDot()} C."));
+            });
 
             CommandAsync<Queries.GetFermentationAbv>(async _ =>
             {
@@ -245,19 +338,32 @@ namespace brewlog.application.Actors
                     Sender.Tell(new BrewSessionActor.Responses.GetFermentationAbvResponse(0)); //TODO Handle this better??
             });
 
-            Command<Commands.FermentationStageComplete>(cmd => Persist(new Events.FermentationStageCompleted(cmd.Fg), On));
+            Command<Commands.FermentationStageComplete>(cmd =>
+            {
+                Persist(new Events.FermentationStageCompleted(cmd.Fg), On);
+                Self.Tell(new Commands.AddLogNote($"Fermentation stage complete. Proceed to bottling. Fg: {cmd.Fg.ToStringWithDot()}"));
+            });
         }
         private void Bottling()
         {
+            Command<Commands.AddLogNote>(cmd =>
+            {
+                Persist(new Events.AddedLogNote(new LogNote(DateTimeOffset.Now, "Bottling", cmd.Note)), On);
+            });
+
+
+            Command<Queries.GetLogNotes>(_ => Sender.Tell(new Responses.GetLogNotesResponse(SessionValues.LogNotes.OrderByDescending(x => x.Time).ToImmutableList())));
+
             Command<Queries.GetBrewSessionState>(_ => Sender.Tell(new Responses.GetBrewSessionStateResponse("Bottling")));
 
             Command<Queries.GetBrewSessionValues>(_ => Sender.Tell(new Responses.BrewSessionValuesResponse(this.SessionValues)));
 
-            //Command<Commands.ChangeBottlingStorageTemperature>(cmd => Persist(new Events.ChangedBottlingStorageTemperature(cmd.Temperature), On));
-
-            //Command<Commands.SetDesiredCo2Colume>(cmd => Persist(new Events.DesiredCo2VolumeSet(cmd.Co2Volume), On));
-
-            Command<Commands.AddBottlingValues>(cmd => Persist(new Events.AddedBottlingValues(cmd.Temperature, cmd.Co2Volume), On));
+            Command<Commands.AddBottlingValues>(cmd =>
+            {
+                Persist(new Events.AddedBottlingValues(cmd.Temperature, cmd.Co2Volume), On);
+                Self.Tell(new Commands.AddLogNote($"Added bottling values. Storage temperature: {cmd.Temperature.ToStringWithDot()}," +
+                    $" CO2 vol: {cmd.Co2Volume.ToStringWithDot()}"));
+            });
 
             CommandAsync<Queries.GetCarbonationPressureInPsi>(async _ =>
             {
@@ -270,6 +376,14 @@ namespace brewlog.application.Actors
 
                 Sender.Tell(new Responses.GetCarbonationPressureInPsiRespone(response.pressure));
             });
+        }
+
+        private void On(Events.AddedLogNote evnt)
+        {
+            SessionValues = SessionValues with
+            {
+                LogNotes = SessionValues.LogNotes.Add(evnt.LogNote)
+            };
         }
 
         private void On(Events.AddedSessionRecipe evnt)
@@ -345,7 +459,19 @@ namespace brewlog.application.Actors
                 ActualValues = SessionValues.ActualValues with 
                 {
                     ActualMashPh = evnt.Ph
-                }                
+                }
+            };
+        }
+
+        private void On(Events.AddedAcidAddition evnt)
+        {
+            SessionValues = SessionValues with
+            {
+                ActualValues = SessionValues.ActualValues with
+                {
+                    ActualMashLacticAcidAdded =
+                    SessionValues.ActualValues.ActualMashLacticAcidAdded + evnt.ml
+                }
             };
         }
 
@@ -366,28 +492,6 @@ namespace brewlog.application.Actors
 
             Become(Boil);
         }
-
-        //private void On(Events.AddedBoilVolume evnt)
-        //{
-        //    SessionValues = SessionValues with
-        //    {
-        //        ActualValues = SessionValues.ActualValues with 
-        //        {
-        //            ActualBoilVolume = evnt.Litres
-        //        }
-        //    };
-        //}
-
-        //private void On(Events.AddedPreBoilSg evnt)
-        //{
-        //    SessionValues = SessionValues with
-        //    {
-        //        ActualValues = SessionValues.ActualValues with 
-        //        {
-        //            ActualPreBoilSg = evnt.PreBoilSg                
-        //        }
-        //    };
-        //}
 
         private void On(Events.AddedPreBoilValues evnt)
         {
@@ -480,28 +584,6 @@ namespace brewlog.application.Actors
 
             Become(Bottling);
         }
-
-        //private void On(Events.ChangedBottlingStorageTemperature evnt)
-        //{
-        //    SessionValues = SessionValues with
-        //    {
-        //        Bottling = SessionValues.Bottling with 
-        //        {
-        //            BottlingStorageTemperature = evnt.Temperature
-        //        }
-        //    };
-        //} 
-
-        //private void On(Events.DesiredCo2VolumeSet evnt)
-        //{
-        //    SessionValues = SessionValues with
-        //    {
-        //        Bottling = SessionValues.Bottling with  
-        //        {
-        //            Co2Volume = evnt.co2Volume
-        //        }
-        //    };
-        //}
 
         private void On(Events.AddedBottlingValues evnt)
         {

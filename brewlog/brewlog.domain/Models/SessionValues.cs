@@ -8,6 +8,7 @@ namespace brewlog.domain.Models
         FermentationValues Fermentation,
         YeastValues Yeast,
         IImmutableList<YeastStarter> YeastStarters,
+        IImmutableList<LogNote> LogNotes,
         CalculatedValues CalculatedValues,
         ActualValues ActualValues,
         BottlingValues Bottling,
@@ -20,6 +21,7 @@ namespace brewlog.domain.Models
             new FermentationValues(),
             new YeastValues(),
             ImmutableList<YeastStarter>.Empty,
+            ImmutableList<LogNote>.Empty,
             new CalculatedValues(),
             new ActualValues(),
             new BottlingValues()

@@ -1,4 +1,30 @@
 .recipe-form{
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
+
+.form-field{
+    width: 45%;
+    margin-bottom: 1rem;
+}
+
+.recipe-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    width:100%;
+    margin: 0.5rem;
+    max-width: 40rem;
+}
+
+.recipe-form-card{   
+    background-color: #a28f65;
+}
+
+.content{
+    display: flex;
+    width: 100vw;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+

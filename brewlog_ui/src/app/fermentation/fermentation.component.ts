@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FermentationService } from '../bl-api';
 import { Router } from '@angular/router';
+import { LogNoteComponent } from '../log-note/log-note.component';
 
 @Component({
   selector: 'app-fermentation',
@@ -9,6 +10,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./fermentation.component.css'],
 })
 export class FermentationComponent implements OnInit {
+
+  @ViewChild(LogNoteComponent) logNoteComponent !:any;
 
   fermentationValueForm = new FormGroup({
     temperature: new FormControl(0, [
@@ -54,6 +57,7 @@ export class FermentationComponent implements OnInit {
         console.log(error);
       }, complete: () => {
         this.updateCurrentAbv();
+        this.logNoteComponent.updateLog();
       }})
     }
   }

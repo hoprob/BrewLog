@@ -14,7 +14,7 @@ const routes: Routes = [
   {path: 'session', component: SessionComponent},
   {path: '', component: SessionComponent},
   {path: 'recipe', component: RecipeComponent},
-  {path: 'yeast-starter', component: YeastStarterComponent},
+  {path: 'yeaststarter', component: YeastStarterComponent},
   {path: 'mash', component: MashComponent},
   {path: 'lauter', component: LauterComponent},
   {path: 'boil', component: BoilComponent},

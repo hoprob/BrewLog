@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BoilService } from '../bl-api';
+import { LogNoteComponent } from '../log-note/log-note.component';
 
 @Component({
   selector: 'app-boil',
@@ -9,6 +10,8 @@ import { BoilService } from '../bl-api';
   styleUrls: ['./boil.component.css'],
 })
 export class BoilComponent implements OnInit {
+  @ViewChild(LogNoteComponent) logNoteComponent !:any;
+
   preboilForm = new FormGroup({
     preboilVolume: new FormControl(0, [
       Validators.pattern('^[0-9]{1,2}.?[0-9]{1,2}$'),
@@ -52,6 +55,7 @@ export class BoilComponent implements OnInit {
           },
           complete: () => {
             this.getSuggestedSgAdjustment();
+            this.logNoteComponent.updateLog();
           },
         });
     }
@@ -93,6 +97,9 @@ export class BoilComponent implements OnInit {
           error: (error) => {
             console.log(error);
           },
+          complete: () => {
+            this.logNoteComponent.updateLog();
+          }
         });
     } else if (
       this.adjustmentType === 'time' &&
@@ -110,6 +117,9 @@ export class BoilComponent implements OnInit {
           error: (error) => {
             console.log(error);
           },
+          complete: () => {
+            this.logNoteComponent.updateLog();
+          }
         });
     }
   }

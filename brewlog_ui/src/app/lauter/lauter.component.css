@@ -2,3 +2,23 @@
     display: flex;
     flex-direction: column;
 }
+
+.water-in-lauter-form-card{
+    background-color: #a28f65; 
+}
+
+.water-in-lauter-form-card button{
+    margin-top: 1.3rem; 
+}
+
+.water-in-lauter-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    align-self: self-start;
+    margin: 1rem;
+}
+
+.lauter-content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}

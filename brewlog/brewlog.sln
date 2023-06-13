@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "brewlog.api_OLD", "brewlog.api_OLD\brewlog.api_OLD.csproj", "{131A13B1-872D-4E42-9E14-565626E14EEC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4688710D-1769-4EE0-96C6-21150A820A4B} = {4688710D-1769-4EE0-96C6-21150A820A4B}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "brewlog.test", "brewlog.test\brewlog.test.csproj", "{87382355-EFEE-4CAC-8C0E-B76885BCF369}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4688710D-1769-4EE0-96C6-21150A820A4B} = {4688710D-1769-4EE0-96C6-21150A820A4B}
@@ -34,10 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{131A13B1-872D-4E42-9E14-565626E14EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{131A13B1-872D-4E42-9E14-565626E14EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{131A13B1-872D-4E42-9E14-565626E14EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{131A13B1-872D-4E42-9E14-565626E14EEC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87382355-EFEE-4CAC-8C0E-B76885BCF369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87382355-EFEE-4CAC-8C0E-B76885BCF369}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87382355-EFEE-4CAC-8C0E-B76885BCF369}.Release|Any CPU.ActiveCfg = Release|Any CPU

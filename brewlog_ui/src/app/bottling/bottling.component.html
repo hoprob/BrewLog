@@ -1,15 +1,29 @@
-<form class="bottling-form" [formGroup]="bottlingForm" (ngSubmit)="submitBottlingForm()">
-    <mat-form-field>
-        <input matInput placeholder="Temperature" type="text" formControlName="temperature">
-        <mat-hint>Enter the storage temperature of the carbonating beer</mat-hint>
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="CO2" type="text" formControlName="co2">
-        <mat-hint>Enter the desired level of CO2 in the beer</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Save</button>
-</form>
-
-<h2>Pressure needed: {{neededPressure}} psi</h2>
-
-<button mat-raised-button (click)="brewSessionComplete()">Finish brew session</button>
+<div class="bottling-content">
+    <mat-card class="bottling-input-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Carbonating</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="bottling-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="bottling-form" [formGroup]="bottlingForm" (ngSubmit)="submitBottlingForm()">
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="Temperature" type="text" formControlName="temperature">
+                            <mat-hint>Enter the storage temperature of the carbonating beer</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="CO2" type="text" formControlName="co2">
+                            <mat-hint>Enter the desired level of CO2 in the beer</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Save</button>
+                    </form>
+                    <h2>Pressure needed: {{neededPressure}} psi</h2>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <div class="session-complete-btn">
+        <button mat-raised-button (click)="brewSessionComplete()">Finish brew session</button>
+    </div>
+    <app-log-note></app-log-note>
+</div>

@@ -14,10 +14,12 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/addAcidAddition.ts
 model/addAdditionalBoilWater.ts
 model/addBottlingValues.ts
 model/addExtendedBoilTime.ts
 model/addFermentationValue.ts
+model/addLogNote.ts
 model/addPhValue.ts
 model/addPreBoilValues.ts
 model/addSessionRecipe.ts

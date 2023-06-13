@@ -1,26 +1,65 @@
-<form class="fermentation-value-form" [formGroup]="fermentationValueForm" (ngSubmit)="submitFermentationValueForm()">
-    <mat-form-field>
-        <input matInput placeholder="Date of measurment" type="datetime-local" formControlName="dateTime">
-        <mat-hint>Enter the date and time of the measurement</mat-hint>
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="SG" type="text" formControlName="sg">
-        <mat-hint>Enter the current sg of the fermenting wort</mat-hint>
-    </mat-form-field>
-    <mat-form-field>
-        <input matInput placeholder="Temperature" type="text" formControlName="temperature">
-        <mat-hint>Enter the temperature of the fermenting wort</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Save</button>
-</form>
+<div class="ferment-content">
+    <mat-card class="fermentation-value-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Fermentation measurment</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="fermentation-value-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="fermentation-value-form" [formGroup]="fermentationValueForm" (ngSubmit)="submitFermentationValueForm()">
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="Date of measurment" type="datetime-local" formControlName="dateTime">
+                            <mat-hint>Enter the date and time of the measurement</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="SG" type="text" formControlName="sg">
+                            <mat-hint>Enter the current sg of the fermenting wort</mat-hint>
+                        </mat-form-field>
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="Temperature" type="text" formControlName="temperature">
+                            <mat-hint>Enter the temperature of the fermenting wort</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Save</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="current-abv-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Current Abv</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="current-abv-value-card mat-elevation-z8">
+                <mat-card-content>
+                    <h2>{{currentAbv ?? "0"}} %</h2>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="fermentation-complete-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Fermentation complete</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="fermentation-complete-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="fermentation-complete-form" [formGroup]="fermentationCompleteForm" (ngSubmit)="submitFermentationCompleteForm()">
+                        <mat-form-field class="form-field">
+                            <input matInput placeholder="FG" type="text" formControlName="fg">
+                            <mat-hint>Enter the final gravity of the fermented beer</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Fermentation Complete</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <app-log-note></app-log-note>
+</div>
 
-<h2>Current ABV: {{currentAbv}}</h2>
 
-<form class="fermentation-complete-form" [formGroup]="fermentationCompleteForm" (ngSubmit)="submitFermentationCompleteForm()">
-    <mat-form-field>
-        <input matInput placeholder="FG" type="text" formControlName="fg">
-        <mat-hint>Enter the final gravity of the fermented beer</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Fermentation Complete</button>
-</form>
+
+
+
 

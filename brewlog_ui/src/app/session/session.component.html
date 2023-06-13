@@ -1,7 +1,36 @@
-<form class="new-session-form" (submit)="startSession()">
-    <mat-form-field>
-        <input matInput placeholder="Enter session name" type="text" [formControl]="sessionName">
-        <mat-hint>The name will be given to the session actor</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Start Session</button>
-</form>
+<div class="session-content">
+    <mat-card class="new-session-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>New Session</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="new-session-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="new-session-form" (submit)="startSession()">
+                        <mat-form-field>
+                            <input matInput placeholder="Enter session name" type="text" [formControl]="sessionName">
+                            <mat-hint>The name will be given to the session actor</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Start Session</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="stored-sessions-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Stored Sessions</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="stored-sessions-list-card mat-elevation-z8">
+                <mat-card-content>
+                    <mat-action-list>
+                        <mat-list-item *ngFor="let session of sessions" (click)="continueSession(session.sessionName ?? '')">
+                            {{session.sessionName}}
+                        </mat-list-item>
+                    </mat-action-list>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>
+    </mat-card>
+</div>

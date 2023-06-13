@@ -10,4 +10,12 @@ namespace brewlog.api.Validators
             RuleFor(command => command.Ph).LessThan(10).GreaterThan(0);
         }
     }
+
+    public class AcidAdditionValidator : AbstractValidator<BrewSessionActor.Commands.AddAcidAddition>
+    {
+        public AcidAdditionValidator()
+        {
+            RuleFor(command => command.ml).GreaterThan(0);
+        }
+    }
 }

@@ -6,3 +6,32 @@
 .new-session-form button{
     margin-top: 3rem;
 }
+
+.session-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+.new-session-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    align-self: flex-start;
+    margin: 1rem;
+}
+
+.new-session-form-card{
+    background-color: #a28f65; 
+}
+
+.stored-sessions-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    align-self: flex-start;
+    margin: 1rem;
+    min-width: 15rem;   
+}
+
+.stored-sessions-list-card{
+    background-color: #a28f65; 
+}

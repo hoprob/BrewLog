@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { YeastStarter } from '../bl-api/model/yeastStarter';
 import { Router } from '@angular/router';
 import { YeastStarterService } from '../bl-api';
+import { LogNoteComponent } from '../log-note/log-note.component';
 
 @Component({
   selector: 'app-yeast-starter',
@@ -10,6 +11,8 @@ import { YeastStarterService } from '../bl-api';
   styleUrls: ['./yeast-starter.component.css'],
 })
 export class YeastStarterComponent implements OnInit {
+  @ViewChild(LogNoteComponent) logNoteComponent !:any;
+  
   yeastStarters: YeastStarter[] = [];
 
   packageViability: number = 100;
@@ -65,6 +68,7 @@ export class YeastStarterComponent implements OnInit {
           },
           complete: () => {
             this.getYeastViability();
+            this.logNoteComponent.updateLog();
           },
         });
     }

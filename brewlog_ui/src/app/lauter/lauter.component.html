@@ -1,7 +1,23 @@
-<form class="lauter-form" [formGroup]="lauterForm" (submit)="submitLauterForm()">
-    <mat-form-field>
-        <input matInput placeholder="Water added" type="text" formControlName="waterInLauter">
-        <mat-hint>Enter number of liters of water added in lauter</mat-hint>
-    </mat-form-field>
-    <button mat-raised-button type="submit">Save</button>
-</form>
+<div class="lauter-content">
+    <mat-card class="water-in-lauter-card mat-elevation-z10">
+        <mat-card-header>
+            <mat-card-title>Water in lauter</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-card class="water-in-lauter-form-card mat-elevation-z8">
+                <mat-card-content>
+                    <form class="lauter-form" [formGroup]="lauterForm" (submit)="submitLauterForm()">
+                        <mat-form-field>
+                            <input matInput placeholder="Water added" type="text" formControlName="waterInLauter">
+                            <mat-hint>Enter number of liters of water added in lauter</mat-hint>
+                        </mat-form-field>
+                        <button mat-raised-button type="submit">Save</button>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </mat-card-content>       
+    </mat-card>
+    <app-log-note></app-log-note>
+</div>
+
+

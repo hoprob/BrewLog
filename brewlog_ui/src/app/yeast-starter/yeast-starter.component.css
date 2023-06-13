@@ -2,3 +2,54 @@
     display: flex;
     flex-direction: column;
 }
+
+.yeast-starters button{
+    margin: 0.5rem;
+}
+
+.yeast-package-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 0.5rem;
+    align-self: flex-start;
+}
+
+.yeast-package-form-card{
+    background-color: #a28f65;
+}
+
+.yeast-starter-content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+}
+
+.yeast-starter-content-header{
+    width: 100%;
+}
+
+.yeast-values-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    margin: 0.5rem;
+    align-self: self-start;
+    min-height: 13.33rem;
+}
+
+.yeast-values-card-content{
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+}
+
+.yeast-starters-card{
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+}
+
+.yeast-starters-form-card{
+    background-color: #a28f65;
+}
+
+.mash-btn{
+    margin: 1rem;
+    width:100%;
+}

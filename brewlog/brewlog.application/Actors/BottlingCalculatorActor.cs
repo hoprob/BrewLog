@@ -2,7 +2,7 @@
 using brewlog.application.Actors;
 using Google.Protobuf;
 
-namespace brewlog.api.Actors
+namespace brewlog.application.Actors
 {
     public class BottlingCalculatorActor : ReceiveActor
     {

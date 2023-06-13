@@ -4,12 +4,13 @@
             double ActualOg,
             double ActualFg,
             double ActualMashPh,
+            double ActualMashLacticAcidAdded,
             double ActualPreBoilSg,
             double ActualBoilTime,
             double ActualLauterVolume,
             double ActualBoilVolume
            )
     {
-        public ActualValues() : this(0, 0, 0, 0, 0, 0, 0) { }
+        public ActualValues() : this(0, 0, 0, 0, 0, 0, 0, 0) { }
     }
 }

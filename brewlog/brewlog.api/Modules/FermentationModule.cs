@@ -23,65 +23,47 @@ namespace brewlog.api.Modules
             fermentation.MapGet("/{sessionName}/current-abv", async (string sessionName) => await GetCurrentAbv(sessionName))
                 .WithDescription("Gets the current abv based on OG and last reported SG").WithName(nameof(GetCurrentAbv));
 
-            fermentation.MapPost("/{sessionName}/fermentation-value", async (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.AddFermentationValue command) =>
-            await AddFermentationValue(ctx, sessionName, command)).WithDescription("Stores specified fermentation values").WithName(nameof(AddFermentationValue));
+            fermentation.MapPost("/{sessionName}/fermentation-value", (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.AddFermentationValue command) =>
+            AddFermentationValue(ctx, sessionName, command)).WithDescription("Stores specified fermentation values").WithName(nameof(AddFermentationValue));
 
-            fermentation.MapPost("/{sessionName}/set-temperature", async (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.ChangeFermentationTemperature command) =>
-            await SetFermentationTemperature(ctx, sessionName, command)).WithDescription("Sets the desired fermentation temperature").WithName(nameof(SetFermentationTemperature));
+            fermentation.MapPost("/{sessionName}/set-temperature", (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.ChangeFermentationTemperature command) =>
+            SetFermentationTemperature(ctx, sessionName, command)).WithDescription("Sets the desired fermentation temperature").WithName(nameof(SetFermentationTemperature));
 
-            fermentation.MapPost("/{sessionName}/fermentation-complete", async (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.FermentationStageComplete command) =>
-            await FermentationStageComplete(ctx, sessionName, command)).WithDescription("Completes the fermentation stage and moves to bottling stage").WithName(nameof(FermentationStageComplete));
+            fermentation.MapPost("/{sessionName}/fermentation-complete", (HttpContext ctx, string sessionName, [FromBody] BrewSessionActor.Commands.FermentationStageComplete command) =>
+            FermentationStageComplete(ctx, sessionName, command)).WithDescription("Completes the fermentation stage and moves to bottling stage").WithName(nameof(FermentationStageComplete));
         }
 
         private async Task<IResult> GetCurrentAbv(string sessionName)
         {
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            try
-            {
-                var response = await sessionActor.Ask<BrewSessionActor.Responses.GetFermentationAbvResponse>( //TODO Extention
+            var response = await _actorSystem.AskBrewSession<BrewSessionActor.Responses.GetFermentationAbvResponse>(sessionName,
                     new BrewSessionActor.Queries.GetFermentationAbv());
 
-                return Results.Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return ex.ApiActorResponse();
-            };
+            return response.Success ? Results.Ok(response.Response) : Results.BadRequest(response.ErrorMessage); 
         }
 
-        private async Task<IResult> AddFermentationValue(HttpContext ctx, string sessionName, BrewSessionActor.Commands.AddFermentationValue command)
+        private IResult AddFermentationValue(HttpContext ctx, string sessionName, BrewSessionActor.Commands.AddFermentationValue command)
         {
-            var validation = ctx.Request.Validate(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }
 
-        private async Task<IResult> SetFermentationTemperature(HttpContext ctx, string sessionName,  BrewSessionActor.Commands.ChangeFermentationTemperature command)
+        private IResult SetFermentationTemperature(HttpContext ctx, string sessionName,  BrewSessionActor.Commands.ChangeFermentationTemperature command)
         {
-            var validation = ctx.Request.Validate(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }
 
-        private async Task<IResult> FermentationStageComplete(HttpContext ctx, string sessionName,  BrewSessionActor.Commands.FermentationStageComplete command)
+        private IResult FermentationStageComplete(HttpContext ctx, string sessionName,  BrewSessionActor.Commands.FermentationStageComplete command)
         {
-            var validation = ctx.Request.Validate(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }

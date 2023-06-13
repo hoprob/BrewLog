@@ -1,0 +1,52 @@
+.log-note-content{
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+    max-width: 40rem;
+}
+
+.log-card{
+    width: 100%;
+    background-image: linear-gradient(to right top, #574426, #634e2d, #6f5833, #7b623a, #876d41, #8d7342, #947843, #9a7e44, #9c803f, #9d823a, #9e8434, #9f862e);
+    max-width: 50rem;
+}
+
+.log-table{
+    width: 100%;
+    max-height: 20rem;
+    overflow: scroll;
+    
+}
+
+.log-table-card{
+    background-color: #a28f65; 
+}
+
+.log-table table{
+    width: 100%;
+    background-color: #a28f65; 
+}
+
+.log-form-card{
+    margin-bottom: 1rem;
+    background-color: #a28f65; 
+}
+
+.lognote-form{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.lognote-form button{
+    max-height: 2.5rem;
+    width: 20%;
+}
+
+.lognote-form .note{
+    width: 70%;
+}
+
+.mat-cell{
+    padding: 8px;
+}

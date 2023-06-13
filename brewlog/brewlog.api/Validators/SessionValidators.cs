@@ -21,4 +21,12 @@ namespace brewlog.api.Validators
             RuleFor(command => command.Recipe.BeerStyle).NotNull();
         }
     }
+
+    public class AddLogNoteValidator : AbstractValidator<BrewSessionActor.Commands.AddLogNote>
+    {
+        public AddLogNoteValidator()
+        {
+            RuleFor(command => command.Note).NotEmpty();
+        }
+    }
 }

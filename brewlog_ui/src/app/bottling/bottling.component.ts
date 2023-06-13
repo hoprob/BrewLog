@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BottlingService } from '../bl-api';
 import { Router } from '@angular/router';
+import { LogNoteComponent } from '../log-note/log-note.component';
 
 @Component({
   selector: 'app-bottling',
@@ -9,6 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./bottling.component.css']
 })
 export class BottlingComponent implements OnInit {
+  @ViewChild(LogNoteComponent) logNoteComponent !:any;
 
   bottlingForm = new FormGroup({
     temperature: new FormControl(0, [
@@ -22,7 +24,7 @@ export class BottlingComponent implements OnInit {
     ]),
   });
 
-  neededPressure?: number;
+  neededPressure: number = 0;
 
   constructor(private router: Router, private bottlingService: BottlingService) { }
 
@@ -42,6 +44,7 @@ export class BottlingComponent implements OnInit {
         console.log(error);
       }, complete: () => {
         this.updateNeccesaryPressure();
+        this.logNoteComponent.updateLog();
       }})
     }
   }

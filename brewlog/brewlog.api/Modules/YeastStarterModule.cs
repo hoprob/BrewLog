@@ -21,14 +21,14 @@ namespace brewlog.api
         {
             var yeastStarter = app.MapGroup("/yeast-starter").WithTags("Yeast starter").WithOpenApi();
 
-            yeastStarter.MapGet("viability/{sessionName}", (string sessionName) => GetYeastViability(sessionName)).WithDescription("Gets viability % of registred yeast package").WithName(nameof(GetYeastViability));
+            yeastStarter.MapGet("viability/{sessionName}", async (string sessionName) => await GetYeastViability(sessionName)).WithDescription("Gets viability % of registred yeast package").WithName(nameof(GetYeastViability));
 
             yeastStarter.MapGet("dme/{sessionName}", async (HttpContext ctx, string sessionName,[AsParameters] BrewSessionActor.Queries.GetGramsOfDMENeeded command) => await GetGramsOfDme(ctx, sessionName, command))
                 .WithDescription("Gets grams of DME to reach 1.037 based on litres of water").WithName(nameof(GetGramsOfDme));
 
-            yeastStarter.MapGet("total-cells/{sessionName}", (string sessionName) => GetTotalYeastCells(sessionName)).WithDescription("Gets the total yeast cells including registered yeast-starters and yeast-package").WithName(nameof(GetTotalYeastCells));
+            yeastStarter.MapGet("total-cells/{sessionName}", async (string sessionName) => await GetTotalYeastCells(sessionName)).WithDescription("Gets the total yeast cells including registered yeast-starters and yeast-package").WithName(nameof(GetTotalYeastCells));
 
-            yeastStarter.MapGet("cells-needed/{sessionName}", (string sessionName) => GetYeastCellsNeeded(sessionName)).WithDescription("Gets the amount of yeastcells needed for the OG").WithName(nameof(GetYeastCellsNeeded));
+            yeastStarter.MapGet("cells-needed/{sessionName}", async (string sessionName) => await GetYeastCellsNeeded(sessionName)).WithDescription("Gets the amount of yeastcells needed for the OG").WithName(nameof(GetYeastCellsNeeded));
 
             yeastStarter.MapGet("produced-cells", async (HttpContext ctx, [AsParameters] YeastCalculatorActor.Queries.GetStarterProducedCells query) => await GetProducedCells(ctx, query))
                 .WithDescription("Gets produced yeastcells based on grams of DME and initial yeastcells").WithName(nameof(GetProducedCells));
@@ -44,77 +44,41 @@ namespace brewlog.api
 
         private async Task<IResult> GetYeastViability(string sessionName)
         {
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
+            var response = await _actorSystem.AskBrewSession<BrewSessionActor.Responses.YeastViabilityResponse>(
+                    sessionName, new BrewSessionActor.Queries.GetYeastViability());
 
-            try
-            {
-                var response = await sessionActor.Ask<BrewSessionActor.Responses.YeastViabilityResponse>(
-                    new BrewSessionActor.Queries.GetYeastViability());
-
-                return Results.Ok(new { viabillityPercentage = response.ViabilityPercentage, calculatedCellsInPackage = response.CalculatedCellsInPackage });
-            }
-            catch (Exception ex)
-            {
-                return ex.ApiActorResponse();
-            };
+            return response.Success ? Results.Ok(new { viabillityPercentage = response.Response.ViabilityPercentage, calculatedCellsInPackage = response.Response.CalculatedCellsInPackage }) :
+                Results.BadRequest(response.ErrorMessage);
         }
 
-        private async Task<IResult> GetGramsOfDme(HttpContext ctx, string sessionName, BrewSessionActor.Queries.GetGramsOfDMENeeded command)
+        private async Task<IResult> GetGramsOfDme(HttpContext ctx, string sessionName, BrewSessionActor.Queries.GetGramsOfDMENeeded query)
         {
-            var validation = ctx.Request.Validate<BrewSessionActor.Queries.GetGramsOfDMENeeded>(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (query.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
+            var response = await _actorSystem.AskBrewSession<BrewSessionActor.Responses.GetGramsOfDMENeededResponse>(sessionName, query);
 
-            try
-            {
-                var response = await sessionActor.Ask<BrewSessionActor.Responses.GetGramsOfDMENeededResponse>(command);
-
-                return Results.Ok(response.GramsOfDME);
-            }
-            catch (Exception ex)
-            {
-                return ex.ApiActorResponse();
-            };
+            return response.Success ? Results.Ok(response.Response.GramsOfDME) : Results.BadRequest(response.ErrorMessage);
         }
 
         private async Task<IResult> GetTotalYeastCells(string sessionName)
         {
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
+            var response = await _actorSystem.AskBrewSession<BrewSessionActor.Responses.GetTotalYeastCellsResponse>(
+                    sessionName, new BrewSessionActor.Queries.GetTotalYeastCells());
 
-            try
-            {
-                var response = await sessionActor.Ask<BrewSessionActor.Responses.GetTotalYeastCellsResponse>(
-                    new BrewSessionActor.Queries.GetTotalYeastCells());
-
-                return Results.Ok(response.TotalYeastCells);
-            }
-            catch (Exception ex)
-            {
-                return ex.ApiActorResponse();
-            };
+            return response.Success ? Results.Ok(response.Response.TotalYeastCells) : Results.BadRequest(response.ErrorMessage);
         }
 
         private async Task<IResult> GetYeastCellsNeeded(string sessionName)
         {
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
+            var response = await _actorSystem.AskBrewSession<BrewSessionActor.Responses.YeastCellsNeededResponse>(
+                sessionName, new BrewSessionActor.Queries.GetYeastCellsNeeded());
 
-            try
-            {
-                var response = await sessionActor.Ask<BrewSessionActor.Responses.YeastCellsNeededResponse>(new BrewSessionActor.Queries.GetYeastCellsNeeded());
-
-                return Results.Ok(response.CellsNeeded);
-            }
-            catch (Exception ex)
-            {
-                return ex.ApiActorResponse();
-            };
+            return response.Success ? Results.Ok(response.Response.CellsNeeded) : Results.BadRequest(response.ErrorMessage);
         }
 
-        private async Task<IResult> GetProducedCells(HttpContext ctx, YeastCalculatorActor.Queries.GetStarterProducedCells query)
+        private async Task<IResult> GetProducedCells(HttpContext ctx, YeastCalculatorActor.Queries.GetStarterProducedCells query) //TODO Go through brewsessionactor?
         {
-            var validation = ctx.Request.Validate<YeastCalculatorActor.Queries.GetStarterProducedCells>(query);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (query.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
             var yeastCalculator = _actorSystem.ActorOf<YeastCalculatorActor>();
 
@@ -130,35 +94,27 @@ namespace brewlog.api
             };
         }
 
-        private async Task<IResult> EnterYeastPackageValues(HttpContext ctx, string sessionName, EnterValuesForYeastPackage command)
+        private IResult EnterYeastPackageValues(HttpContext ctx, string sessionName, EnterValuesForYeastPackage command)
         {
-            var validation = ctx.Request.Validate<BrewSessionActor.Commands.EnterValuesForYeastPackage>(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }
 
-        private async Task<IResult> YeastStarterComplete(string sessionName)
+        private IResult YeastStarterComplete(string sessionName)
         {
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(new BrewSessionActor.Commands.YeastStarterComplete());
-
+            _actorSystem.TellBrewSession(sessionName, new BrewSessionActor.Commands.YeastStarterComplete());
+   
             return Results.Ok();
         }
 
-        private async Task<IResult> AddYeastStarters(HttpContext ctx, string sessionName, BrewSessionActor.Commands.StoreYeastStarters command)
+        private IResult AddYeastStarters(HttpContext ctx, string sessionName, BrewSessionActor.Commands.StoreYeastStarters command)
         {
-            var validation = ctx.Request.Validate<BrewSessionActor.Commands.StoreYeastStarters>(command);
-            if (!validation.IsValid) return Results.UnprocessableEntity(validation.GetFormattedErrors());
+            if (command.Validate(ctx) is IEnumerable<ModelError> errors) return Results.UnprocessableEntity(errors);
 
-            var sessionActor = await _actorSystem.GetBrewSession(sessionName);
-
-            sessionActor.Tell(command);
+            _actorSystem.TellBrewSession(sessionName, command);
 
             return Results.Ok();
         }
